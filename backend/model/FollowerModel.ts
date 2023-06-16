@@ -9,11 +9,13 @@ const followerSchema = new Schema<IFollower>({
         index: true
 
     },
+    
     followerID: {
         type: Schema.Types.ObjectId,
         ref: "UserModel",
         required: true,
     }
+
 }, {
     timestamps: true
 })

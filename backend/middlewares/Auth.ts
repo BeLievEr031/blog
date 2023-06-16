@@ -14,8 +14,7 @@ const auth = async (req: IRequest, res: IResponse, next: INext) => {
             return next(createError(422, "Invalid token"))
         }
 
-        console.log(payload);
-
+        next()
     } catch (error) {
         return next(error)
     }
