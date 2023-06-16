@@ -8,11 +8,13 @@ const followingSchema = new Schema<IFollowing>({
         required: true,
         index: true
     },
+
     followingID: {
         type: Schema.Types.ObjectId,
         ref: "UserModel",
         required: true,
     }
+    
 }, {
     timestamps: true
 })
