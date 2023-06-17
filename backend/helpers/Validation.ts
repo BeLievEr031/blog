@@ -1,4 +1,4 @@
-import { ILoginUser, ISocialQuery, IUser } from "../types";
+import { IGetQuery, ILoginUser, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
     validateRegisterUser(data: IUser) {
@@ -21,9 +21,19 @@ class Validation {
         return validateSchema.validate(data);
     }
 
-    validateSocial(query: ISocialQuery) {
+    validateSocial(query: any) {
         const validateSchema = Joi.object<ISocialQuery>({
             type: Joi.string().disallow("").trim().valid("FOLLOW", "UNFOLLOW")
+        })
+
+        return validateSchema.validate(query);
+    }
+
+    validateGetQuery(query: any) {
+        const validateSchema = Joi.object<IGetQuery>({
+            page: Joi.number().min(1).required(),
+            limit: Joi.number().min(5).max(12).required(),
+            sort: Joi.string().disallow("").trim().valid("ASC", "DESC")
         })
 
         return validateSchema.validate(query);
