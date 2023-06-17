@@ -19,9 +19,13 @@ export interface TypedRequestQuery<T extends Query> extends Express.Request {
 }
 
 export interface IGetQuery extends ParsedQs {
-    query?: any,
     page: number,
     limit: number,
     sort: "ASC" | "DESC",
+    keyword?: string
+}
 
+export interface IEditQuery {
+    id: string,
+    action: string
 }
