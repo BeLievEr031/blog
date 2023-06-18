@@ -1,4 +1,5 @@
 import AuthRouter from "./AuthRoute";
 import SocialRouter from "./SocialRoutes";
 import CategoryRouter from "./CategoryRoute";
-export { AuthRouter, SocialRouter, CategoryRouter };
+import BlogRouter from "./BlogRoute";
+export { AuthRouter, SocialRouter, CategoryRouter, BlogRouter };
