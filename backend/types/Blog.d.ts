@@ -14,7 +14,7 @@ export interface IBlog extends Document {
     subcategories: Schema.Types.ObjectId[],
     summery: string,//Summery of blog.
     status: "PUBLISH" | "UNPUBLISH",
-    owner: Schema.Types.ObjectId
+    owner: Schema.Types.ObjectId | string,
 }
 
 export interface ICategory extends Document {

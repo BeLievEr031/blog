@@ -22,10 +22,11 @@ app.use(cors(corsOptions))
 app.use(helmet())
 
 // ####### Api Routing Start ########
-import { AuthRouter, CategoryRouter, SocialRouter } from "./routes";
+import { AuthRouter, BlogRouter, CategoryRouter, SocialRouter } from "./routes";
 app.use("/api/auth", AuthRouter)
 app.use("/api/social", SocialRouter)
 app.use("/api/category", CategoryRouter)
+app.use("/api/blog", BlogRouter)
 
 
 // middleware for handling the error

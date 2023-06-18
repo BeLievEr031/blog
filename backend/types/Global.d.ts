@@ -23,10 +23,15 @@ export interface IGetQuery extends ParsedQs {
     page: number,
     limit: number,
     sort: "ASC" | "DESC",
-    keyword?: string
+    keyword?: string,
+    id?: string,
+    categoryid?: string
 }
 
 export interface IEditQuery {
     id: string,
     action: string
+}
+export interface IParam {
+    id: string,
 }

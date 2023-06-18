@@ -1,4 +1,4 @@
-import { IBlog, ICategory, IEditQuery, IGetQuery, ILoginUser, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
+import { IBlog, ICategory, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
     validateRegisterUser(data: IUser) {
@@ -41,7 +41,9 @@ class Validation {
             page: Joi.number().min(1).required(),
             limit: Joi.number().min(5).max(12).required(),
             sort: Joi.string().disallow("").trim().valid("ASC", "DESC"),
-            keyword: Joi.string().allow("").optional()
+            keyword: Joi.string().allow("").optional(),
+            id: Joi.string().allow("").optional(),
+            categoryid: Joi.string().allow("").optional(),
         })
 
         return validateSchema.validate(query);
@@ -70,9 +72,17 @@ class Validation {
             category: Joi.string().required().disallow(""),
             subcategories: Joi.array().items(Joi.string()),//.required(),
             summery: Joi.string().trim(),
-            status: Joi.string().valid("PUBLISH", "UNPUBLISH")
+            status: Joi.string().valid("PUBLISH", "UNPUBLISH"),
+            owner: Joi.string().optional().disallow("")
         })
         return validateSchema.validate(data);
+    }
+
+    validateReqParams(param: any) {
+        const validateSchema = Joi.object<IParam>({
+            id: Joi.string().disallow("").trim().required()
+        })
+        return validateSchema.validate(param);
     }
 }
 
