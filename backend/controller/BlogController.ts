@@ -6,7 +6,7 @@ class BlogController {
         try {
 
         } catch (error) {
-
+            return next(error)
         }
     }
 
@@ -14,7 +14,7 @@ class BlogController {
         try {
 
         } catch (error) {
-
+            return next(error)
         }
     }
 
@@ -22,7 +22,7 @@ class BlogController {
         try {
 
         } catch (error) {
-
+            return next(error)
         }
     }
 
@@ -30,7 +30,7 @@ class BlogController {
         try {
 
         } catch (error) {
-
+            return next(error)
         }
     }
 

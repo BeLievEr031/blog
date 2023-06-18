@@ -1,4 +1,4 @@
-import { ICategory, IEditQuery, IGetQuery, ILoginUser, ISocialQuery, IUser, TypedRequestQuery } from "../types";
+import { IBlog, ICategory, IEditQuery, IGetQuery, ILoginUser, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
     validateRegisterUser(data: IUser) {
@@ -56,6 +56,24 @@ class Validation {
         return validateSchema.validate(query);
     }
 
+    validateBlog(data: IRequest) {
+        const validateSchema = Joi.object<IBlog>({
+            title: Joi.string().trim().required().disallow("").min(20).max(100),
+            description: Joi.string().trim().required().disallow(""),
+            type: Joi.string().trim().valid("FREE", "PAID").default("FREE"),
+            thumbnail: Joi.string().optional().allow(""),
+            like: Joi.number().default(0),
+            dislike: Joi.number().default(0),
+            visit: Joi.number().default(0),
+            share: Joi.number().default(0),
+            time: Joi.number().default(0),
+            category: Joi.string().required().disallow(""),
+            subcategories: Joi.array().items(Joi.string()),//.required(),
+            summery: Joi.string().trim(),
+            status: Joi.string().valid("PUBLISH", "UNPUBLISH")
+        })
+        return validateSchema.validate(data);
+    }
 }
 
 export default new Validation();
