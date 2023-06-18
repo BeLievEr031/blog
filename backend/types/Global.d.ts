@@ -2,13 +2,14 @@ import { ParsedQs } from 'qs';
 import { Query } from 'express-serve-static-core';
 import { NextFunction, Request, Response } from "express";
 import { IUser } from "./Auth";
+import { JwtPayload } from 'jsonwebtoken';
 export interface IRequest extends Request {
-    user?: IUser
+    user?: IPayload
 }
 export interface IResponse extends Response { }
 export interface INext extends NextFunction { }
 
-export interface IPayload {
+export interface IPayload extends JwtPayload {
     _id: string,
     email: string
 }
