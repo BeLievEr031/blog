@@ -25,3 +25,12 @@ export interface ISubCategory extends Document {
     subcategory: string,
     category: Schema.Types.ObjectId
 }
+
+export interface IComment extends Document {
+    blogID: Schema.Types.ObjectId,
+    commentID: Schema.Types.ObjectId | null,
+    userID: Schema.Types.ObjectId,
+    comment: string,
+    like: number,
+    unlike: number
+}
