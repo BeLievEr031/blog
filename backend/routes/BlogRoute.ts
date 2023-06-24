@@ -9,6 +9,8 @@ BlogRouter.put("/", auth, BlogController.edit);
 BlogRouter.get("/", auth, BlogController.get);
 BlogRouter.delete("/:id", auth, BlogController.delete);
 
-
+// Blog comment routes
+BlogRouter.post("/comment", auth, BlogController.createComment)
+BlogRouter.put("/comment", auth, BlogController.createComment)
 
 export default BlogRouter;

@@ -34,3 +34,5 @@ export interface IComment extends Document {
     like: number,
     unlike: number
 }
+
+// export 

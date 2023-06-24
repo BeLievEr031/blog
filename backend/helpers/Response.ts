@@ -1,8 +1,8 @@
-import { IBlog, ICategory, IResponse, ISubCategory, IUser } from "../types";
+import { IBlog, ICategory, IComment, IResponse, ISubCategory, IUser } from "../types";
 
 export interface IResData {
     message: string,
-    data: IUser | IBlog | ISubCategory | ICategory | IUser[] | IBlog[] | ICategory[] | ISubCategory[]
+    data: IUser | IBlog | ISubCategory | ICategory | IComment | IUser[] | IBlog[] | ICategory[] | ISubCategory[] | IComment[]
 }
 
 const SResponse = (res: IResponse, data: IResData) => {

@@ -1,4 +1,4 @@
-import { IBlog, ICategory, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
+import { IBlog, ICategory, IComment, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
     validateRegisterUser(data: IUser) {
@@ -84,6 +84,31 @@ class Validation {
         })
         return validateSchema.validate(param);
     }
+
+    validateComment(data: IRequest, type: string) {
+
+        if (type === "comment") {
+            const validateSchema = Joi.object<IComment>({
+                blogID: Joi.string().required().disallow(""),
+                comment: Joi.string().required().disallow("").trim(),
+                like: Joi.number().default(0),
+                unlike: Joi.number().default(0),
+            })
+            return validateSchema.validate(data);
+        } else {
+            const validateSchema = Joi.object<IComment>({
+                blogID: Joi.string().required().disallow(""),
+                commentID: Joi.string().required().disallow(""),
+                comment: Joi.string().required().disallow("").trim(),
+                like: Joi.number().default(0),
+                unlike: Joi.number().default(0),
+            })
+            return validateSchema.validate(data);
+        }
+
+
+    }
+
 }
 
 export default new Validation();

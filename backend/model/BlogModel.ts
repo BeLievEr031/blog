@@ -1,3 +1,4 @@
+import createError from 'http-errors';
 import { Schema, model } from "mongoose"
 import { IBlog } from "../types/Blog";
 
@@ -79,9 +80,14 @@ function limitSubCategory(limit: number) {
     return function limitFunc(value: Schema.Types.ObjectId[]): boolean {
         return value.length < limit
     }
-
 }
 
+blogSchema.pre("save", function (next) {
+    if (this.dislike < 0) {
+        return next(createError(422, "Can't be disliked."))
+    }
+    next();
+})
 
 const BlogModel = model<IBlog>("BlogModel", blogSchema, "Blogs")
 export default BlogModel;

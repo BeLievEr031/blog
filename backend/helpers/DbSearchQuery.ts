@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { BlogModel, CategoryModel, UserModel } from "../model";
+import { BlogModel, CategoryModel, CommentModel, UserModel } from "../model";
 
 class DbSearch {
     async FindByEmail(email: string) {
@@ -11,6 +11,8 @@ class DbSearch {
             return await CategoryModel.findById(new mongoose.Types.ObjectId(id));
         } else if (type === "blog") {
             return await BlogModel.findById(new mongoose.Types.ObjectId(id));
+        }else if(type === "comment"){
+            return await CommentModel.findById(new mongoose.Types.ObjectId(id));
         }
         return await UserModel.findById(new mongoose.Types.ObjectId(id));
     }
