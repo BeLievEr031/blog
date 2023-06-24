@@ -5,6 +5,7 @@ import { BlogService } from '../service';
 import { IResData } from '../helpers/Response';
 import { BlogModel } from '../model';
 import mongoose from 'mongoose';
+import Joi from 'joi';
 
 class BlogController {
 
@@ -98,6 +99,55 @@ class BlogController {
             return next(error)
         }
     }
+
+    async createComment(req: IRequest, res: IResponse, next: INext) {
+        try {
+
+            const { user } = req.user!;
+            let type: string;
+            // Creating block scope element
+            {
+                const validateQuery = Joi.object<{ type: string }>({
+                    type: Joi.string().required().disallow("")
+                })
+
+                const { error, value } = validateQuery.validate(req.query);
+                if (error) {
+                    return next(createError(422, error.message))
+                }
+                type = value.type;
+            }
+
+            const { error, value } = Validation.validateComment(req.body, type)
+            if (error) {
+                return next(createError(422, error.message))
+            }
+
+            const result = await BlogService.createComment(value)
+            const resData: IResData = {
+                message: "Comment created successfully."
+                , data: result
+            }
+            return SResponse(res, resData)
+
+        } catch (error) {
+            return next(error)
+        }
+    }
+
+    async editComment(req: IRequest, res: IResponse, next: INext) {
+        try {
+            const { error, value } = Validation.validateEditQuery(req.query)
+            if (error) return next(createError(422, error.message))
+
+            const isExists = await DbSearchQuery.FindById(value?.id!, "comment");
+            if (!isExists) return next(createError(409, "Invalid comment."))
+
+        } catch (error) {
+            return next(error);
+        }
+    }
+    
 }
 
 export default new BlogController();
