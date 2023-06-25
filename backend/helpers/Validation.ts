@@ -1,4 +1,4 @@
-import { IBlog, ICategory, IComment, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
+import { IBlog, ICategory, IComment, ICommentGetQuery, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
     validateRegisterUser(data: IUser) {
@@ -36,23 +36,39 @@ class Validation {
         return validateSchema.validate(catgory);
     }
 
-    validateGetQuery(query: any) {
-        const validateSchema = Joi.object<IGetQuery>({
-            page: Joi.number().min(1).required(),
-            limit: Joi.number().min(5).max(12).required(),
-            sort: Joi.string().disallow("").trim().valid("ASC", "DESC"),
-            keyword: Joi.string().allow("").optional(),
-            id: Joi.string().allow("").optional(),
-            categoryid: Joi.string().allow("").optional(),
-        })
+    validateGetQuery(query: any, type?: string) {
+        let validateSchema;
+        if (type && type === "comment") {
+            validateSchema = Joi.object<ICommentGetQuery>({
+                page: Joi.number().min(1).required(),
+                limit: Joi.number().min(5).max(12).required(),
+                sort: Joi.string().disallow("").trim().valid("ASC", "DESC"),
+                blogid: Joi.string().disallow("").required(),
+                commentid: Joi.string().allow().optional(),
+            })
+            return validateSchema.validate(query);
 
-        return validateSchema.validate(query);
+        } else {
+            validateSchema = Joi.object<IGetQuery>({
+                page: Joi.number().min(1).required(),
+                limit: Joi.number().min(5).max(12).required(),
+                sort: Joi.string().disallow("").trim().valid("ASC", "DESC"),
+                keyword: Joi.string().allow("").optional(),
+                id: Joi.string().allow("").optional(),
+                categoryid: Joi.string().allow("").optional(),
+            })
+
+            return validateSchema.validate(query);
+
+        }
+
     }
 
     validateEditQuery(query: any) {
         const validateSchema = Joi.object<IEditQuery>({
             id: Joi.string().disallow("").trim().required(),
-            action: Joi.string().disallow("").trim().required()
+            action: Joi.string().disallow("").trim().required(),
+            type: Joi.string().optional()
         })
 
         return validateSchema.validate(query);
@@ -86,7 +102,6 @@ class Validation {
     }
 
     validateComment(data: IRequest, type: string) {
-
         if (type === "comment") {
             const validateSchema = Joi.object<IComment>({
                 blogID: Joi.string().required().disallow(""),

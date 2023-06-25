@@ -1,4 +1,5 @@
 import { Document, Schema } from "mongoose";
+import { IGetQuery } from "./Global";
 
 export interface IBlog extends Document {
     title: string,
@@ -35,4 +36,7 @@ export interface IComment extends Document {
     unlike: number
 }
 
-// export 
+export interface ICommentGetQuery extends IGetQuery {
+    blogid: string,
+    commentid: string | null
+} 
