@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { BlogModel, CommentModel } from "../model";
-import { IBlog, IComment, IEditQuery, IGetQuery } from "../types";
+import { IBlog, IComment, ICommentGetQuery, IEditQuery, IGetQuery } from "../types";
 
 class BlogService {
     async create(data: IBlog) {
         return await BlogModel.create(data);
     }
-    
+
     async edit(query: IEditQuery, data?: IBlog) {
         if (query.action === "PUBLISH") {
             return await BlogModel.findByIdAndUpdate({
@@ -61,7 +61,7 @@ class BlogService {
                 .limit(query.limit).skip((query.page - 1) * query.limit)
                 .sort({ createdAt: query.sort === "ASC" ? 1 : -1 })
         }
-        
+
         return await BlogModel.find({})
             .limit(query.limit).skip((query.page - 1) * query.limit)
             .sort({ createdAt: query.sort === "ASC" ? 1 : -1 })
@@ -76,25 +76,43 @@ class BlogService {
         return await CommentModel.create(data)
     }
 
-    async editComment(query: IEditQuery) {
+    async editComment(query: IEditQuery, data?: { comment: string }) {
         if (query.action === "LIKE") {
-            return CommentModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
+            return await CommentModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
                 $inc: {
                     like: 1
                 }
             })
         } else if (query.action === "UNLIKE") {
-            return CommentModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
+            return await CommentModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
                 $inc: {
-                    like: -1,
                     unlike: 1
                 }
             })
         } else if (query.action === "DELETE") {
-
+            return await CommentModel.findByIdAndDelete({ _id: new mongoose.Types.ObjectId(query.id) })
         }
 
+        return await CommentModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
+            $set: data!
+        })
 
+    }
+
+    async getComment(query: ICommentGetQuery) {
+        if (query.commentid) {
+            return await CommentModel.find({ $and: [{ blogID: new mongoose.Types.ObjectId(query.blogid!) }, { commentID: new mongoose.Types.ObjectId(query.commentid!) }] },
+                { updatedAt: 0, __v: 0, blogID: 0 })
+                .skip((query.page - 1) * query.limit)
+                .limit(query.limit)
+                .sort(query.sort)
+        }
+
+        return await CommentModel.find({ $and: [{ blogID: new mongoose.Types.ObjectId(query.blogid!) }, { commentID: null }] },
+            { updatedAt: 0, __v: 0, blogID: 0 })
+            .skip((query.page - 1) * query.limit)
+            .limit(query.limit)
+            .sort(query.sort)
     }
 }
 

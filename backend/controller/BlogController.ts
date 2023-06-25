@@ -1,14 +1,13 @@
 import createError from 'http-errors';
 import { DbSearchQuery, SResponse, Validation } from "../helpers";
-import { INext, IRequest, IResponse } from "../types";
+import { ICommentGetQuery, IGetQuery, INext, IRequest, IResponse } from "../types";
 import { BlogService } from '../service';
 import { IResData } from '../helpers/Response';
-import { BlogModel } from '../model';
-import mongoose from 'mongoose';
+import { BlogModel, CommentModel } from '../model';
+import mongoose, { Schema } from 'mongoose';
 import Joi from 'joi';
 
 class BlogController {
-
     async create(req: IRequest, res: IResponse, next: INext) {
         try {
             const user = req.user!;
@@ -72,7 +71,7 @@ class BlogController {
                 const isExists = await BlogModel.findOne({ $or: [{ _id: new mongoose.Types.ObjectId(value.id) }, { category: new mongoose.Types.ObjectId(value.categoryid) }] })
                 if (!isExists) return next(createError(409, "Invalid blog"))
             }
-            const result = await BlogService.get(value);
+            const result = await BlogService.get(value as IGetQuery);
             const resData = {
                 message: "Blog fetched",
                 data: result!
@@ -142,12 +141,55 @@ class BlogController {
 
             const isExists = await DbSearchQuery.FindById(value?.id!, "comment");
             if (!isExists) return next(createError(409, "Invalid comment."))
+            // Set query and type for the editing the comment
+            const query = value;
+            const type = value.type!;
+            let resData: IResData;
+            if (value.action === "EDIT") {
+                const validateSchema = Joi.object<{ comment: string }>({
+                    comment: Joi.string().trim().required().disallow("")
+                })
+                const { error, value } = validateSchema.validate(req.body)
+                if (error) {
+                    return next(createError(422, error.message))
+                }
+                const result = await BlogService.editComment(query, value);
+                resData = {
+                    message: "Comment updated.",
+                    data: result!
+                }
+                return SResponse(res, resData);
+            }
+
+            const result = await BlogService.editComment(query);
+            resData = {
+                message: `Comment ${query.action.toLowerCase() + "ed"} successfully.`,
+                data: result!
+            }
+            return SResponse(res, resData);
 
         } catch (error) {
             return next(error);
         }
     }
-    
+
+    async getComment(req: IRequest, res: IResponse, next: INext) {
+        try {
+            const { error, value } = Validation.validateGetQuery(req.query, "comment")
+            if (error) {
+                return next(createError(422, error.message))
+            }
+            const result = await BlogService.getComment(value as ICommentGetQuery)
+            const resData = {
+                message: "Comment fetched.",
+                data: result!
+            }
+            return SResponse(res, resData);
+        } catch (error) {
+            return next(error)
+        }
+    }
+
 }
 
 export default new BlogController();
