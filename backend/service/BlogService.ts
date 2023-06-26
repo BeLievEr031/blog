@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { BlogModel, CommentModel } from "../model";
-import { IBlog, IComment, ICommentGetQuery, IEditQuery, IGetQuery } from "../types";
+import { BlogModel, CommentModel, LikeDislikeModel } from "../model";
+import { IBlog, IComment, ICommentGetQuery, IEditQuery, IGetQuery, ILikeDislikeQuery } from "../types";
 
 class BlogService {
     async create(data: IBlog) {
@@ -113,6 +113,71 @@ class BlogService {
             .skip((query.page - 1) * query.limit)
             .limit(query.limit)
             .sort(query.sort)
+    }
+
+    async likeDislike(query: ILikeDislikeQuery, id: string, userID: string) {
+        if (query.type === "BLOG") {
+            const isExists = await LikeDislikeModel.findOne({ $and: [{ blogID: new mongoose.Types.ObjectId(id) }, { userID: new mongoose.Types.ObjectId(userID) }] })
+            if (isExists) {
+                if (query.action === "LIKE") {
+                    isExists.dislike = 0;
+                    isExists.like = 1;
+                } else {
+                    isExists.dislike = 1;
+                    isExists.like = 0;
+                }
+
+                await isExists.save();
+                return isExists;
+            }
+
+            if (query.action === "LIKE") {
+                return await LikeDislikeModel.create({
+                    blogID: new mongoose.Types.ObjectId(id),
+                    commentID: null,
+                    like: 1,
+                    userID: new mongoose.Types.ObjectId(userID)
+                })
+            }
+
+            return await LikeDislikeModel.create({
+                blogID: new mongoose.Types.ObjectId(id),
+                commentID: null,
+                dislike: 1,
+                userID: new mongoose.Types.ObjectId(userID)
+            })
+        }
+
+        const isExists = await LikeDislikeModel.findOne({ $and: [{ commentID: new mongoose.Types.ObjectId(id) }, { userID: new mongoose.Types.ObjectId(userID) }] })
+        if (isExists) {
+            if (query.action === "LIKE") {
+                isExists.dislike = 0;
+                isExists.like = 1;
+            } else {
+                isExists.dislike = 1;
+                isExists.like = 0;
+            }
+
+            await isExists.save();
+            return isExists;
+        }
+        if (query.action === "LIKE") {
+            return await LikeDislikeModel.create({
+                commentID: new mongoose.Types.ObjectId(id),
+                blogID: null,
+                like: 1,
+                userID: new mongoose.Types.ObjectId(userID)
+            })
+        }
+
+        return await LikeDislikeModel.create({
+            commentID: new mongoose.Types.ObjectId(id),
+            blogID: null,
+            dislike: 1,
+            userID: new mongoose.Types.ObjectId(userID)
+        })
+
+
     }
 }
 

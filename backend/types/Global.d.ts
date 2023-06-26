@@ -3,6 +3,7 @@ import { Query } from 'express-serve-static-core';
 import { NextFunction, Request, Response } from "express";
 import { IUser } from "./Auth";
 import { JwtPayload } from 'jsonwebtoken';
+import { Schema } from 'mongoose';
 export interface IRequest extends Request {
     user?: IPayload
 }
@@ -36,6 +37,8 @@ export interface IEditQuery {
     action: string,
     type?: string
 }
+
 export interface IParam {
     id: string,
 }
+

@@ -14,4 +14,8 @@ BlogRouter.post("/comment", auth, BlogController.createComment)
 BlogRouter.put("/comment", auth, BlogController.editComment)
 BlogRouter.get("/comment", auth, BlogController.getComment)
 
+
+// Like and dislike route fot the Blog & Comment
+BlogRouter.put("/like-dislike/:id", auth, BlogController.likeDislike)
+
 export default BlogRouter;

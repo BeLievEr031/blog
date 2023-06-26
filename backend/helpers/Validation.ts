@@ -1,6 +1,7 @@
-import { IBlog, ICategory, IComment, ICommentGetQuery, IEditQuery, IGetQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
+import { IBlog, ICategory, IComment, ICommentGetQuery, IEditQuery, IGetQuery, ILikeDislike, ILikeDislikeQuery, ILoginUser, IParam, IRequest, ISocialQuery, IUser, TypedRequestQuery } from "../types";
 import Joi from 'joi';
 class Validation {
+
     validateRegisterUser(data: IUser) {
         const validateSchema = Joi.object<IUser>({
             name: Joi.string().min(5).max(25).trim().required().disallow(""),
@@ -124,6 +125,14 @@ class Validation {
 
     }
 
+    validateLikeDislike(query: any) {
+        const validateSchema = Joi.object<ILikeDislikeQuery>({
+            action:Joi.string().required().disallow("").valid("LIKE","DISLIKE"),
+            type:Joi.string().required().disallow("").valid("BLOG","COMMENT")
+        })
+        
+        return validateSchema.validate(query) 
+    }
 }
 
 export default new Validation();

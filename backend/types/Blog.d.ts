@@ -39,4 +39,17 @@ export interface IComment extends Document {
 export interface ICommentGetQuery extends IGetQuery {
     blogid: string,
     commentid: string | null
-} 
+}
+
+export interface ILikeDislike {
+    blogID: Schema.Types.ObjectId,
+    commentID: Schema.Types.ObjectId,
+    like: number,
+    dislike: number,
+    userID: Schema.Types.ObjectId
+}
+
+export interface ILikeDislikeQuery {
+    type: "BLOG" | "COMMENT",
+    action: "LIKE" | "DISLIKE"
+}

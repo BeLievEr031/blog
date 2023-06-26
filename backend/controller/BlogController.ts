@@ -190,6 +190,29 @@ class BlogController {
         }
     }
 
+    async likeDislike(req: IRequest, res: IResponse, next: INext) {
+        try {
+            const { error, value } = Validation.validateLikeDislike(req.query);
+            if (error) return next(createError(422, error.message));
+            if (!req.params.id) return next(createError(422, `Invalid ${value.type.toLowerCase()} id.`))
+            if (value.type === "BLOG") {
+                const isExists = await BlogModel.findById(new mongoose.Types.ObjectId(req.params.id))
+                if (!isExists) return next(createError(422, `Invalid ${value.type.toLowerCase()} id.`));
+            } else {
+                const isExists = await CommentModel.findById(new mongoose.Types.ObjectId(req.params.id))
+                if (!isExists) return next(createError(422, `Invalid ${value.type.toLowerCase()} id.`));
+            }
+            const result = await BlogService.likeDislike(value, req.params.id!, req.user?._id!)
+            const resData = {
+                message: `${value.type.toLocaleLowerCase()} ${value.action.toLocaleLowerCase()} successfully.`,
+                data: result!
+            }
+            return SResponse(res, resData);
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }
 
 export default new BlogController();
