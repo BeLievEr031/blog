@@ -46,6 +46,7 @@ class BlogService {
     }
 
     async get(query: IGetQuery) {
+
         if (query.id) {
             return await BlogModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(query.id) }, {
                 $inc: {
@@ -178,6 +179,15 @@ class BlogService {
         })
 
 
+    }
+
+    async trendinMostLiked() {
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1;
+        const day = new Date().getDay() - 2;
+        const trending = await BlogModel.find({ $and: [{ $lte: { createdAt: new Date() } }, { $gte: new Date(`${month}/${day}/${year}`) }] }).sort({ visit: -1 }).limit(6)
+        const liked = await BlogModel.find().sort({ like: -1 }).limit(6)
+        return { trending, liked }
     }
 }
 

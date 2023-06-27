@@ -213,6 +213,21 @@ class BlogController {
         }
     }
 
+    async trendingMostLiked(req: IRequest, res: IResponse, next: INext) {
+        try {
+            const { trending, liked } = await BlogService.trendinMostLiked();
+            return res.status(200).json({
+                message: "Trending & MOst liked Fetched.",
+                data: {
+                    trending,
+                    liked
+                }
+            })
+        } catch (error) {
+            return next(error)
+        }
+    }
+
 }
 
 export default new BlogController();

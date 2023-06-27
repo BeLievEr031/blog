@@ -18,4 +18,7 @@ BlogRouter.get("/comment", auth, BlogController.getComment)
 // Like and dislike route fot the Blog & Comment
 BlogRouter.put("/like-dislike/:id", auth, BlogController.likeDislike)
 
+// trending and most liked blog
+BlogRouter.get("/trending-mostliked",auth,BlogController.trendingMostLiked)
+
 export default BlogRouter;
